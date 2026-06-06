@@ -314,4 +314,4 @@ Built for **Snaphomz Hackathon 2.0** — Project #10 from the project menu.
 
 ## Licence
 
-Confidential — Snaphomz internal hackathon project. Do not distribute.
+Since its a hackathon project and does not uphold any critical business data or logic, there is as such no confidentiality around it. So its free to use and distribute.
