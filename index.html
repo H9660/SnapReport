@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnapReport · Monthly Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0B1F3A;
+      --teal:   #00A896;
+      --gold:   #F4A900;
+      --light:  #F7F9FC;
+      --mid:    #DDE4EE;
+      --text:   #1A2B45;
+      --muted:  #6B7C93;
+      --white:  #FFFFFF;
+      --red:    #E63B2E;
+      --serif:  'DM Serif Display', Georgia, serif;
+      --sans:   'DM Sans', system-ui, sans-serif;
+    }
+
+    html, body { height: 100%; background: var(--light); font-family: var(--sans); color: var(--text); }
+
+    /* ── Top nav ── */
+    nav {
+      background: var(--navy);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      gap: 0.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(11,31,58,0.18);
+    }
+    .nav-logo { font-family: var(--sans); font-size: 1.25rem; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+    .nav-logo span { color: var(--gold); }
+    .nav-pill {
+      margin-left: 0.75rem;
+      background: var(--teal);
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+    .nav-right { margin-left: auto; font-size: 0.8rem; color: var(--muted); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #122640 60%, #0d3348 100%);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 110%, rgba(0,168,150,0.18) 0%, transparent 70%);
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.1rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: var(--white);
+      line-height: 1.1;
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto 1.4rem;
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero p {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto 2.8rem;
+      line-height: 1.6;
+      position: relative;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      position: relative;
+      margin-top: 0.5rem;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-n { font-family: var(--serif); font-size: 1.9rem; color: var(--gold); line-height: 1; }
+    .hero-stat-l { font-size: 0.72rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 3px; }
+
+    /* ── Main layout ── */
+    main { max-width: 880px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 2px 24px rgba(11,31,58,0.07);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .card-header {
+      background: var(--navy);
+      padding: 1.2rem 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .card-header-dot {
+      width: 8px; height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .card-header h2 { font-size: 0.9rem; font-weight: 700; color: var(--white); letter-spacing: 0.03em; }
+    .card-body { padding: 1.8rem; }
+
+    /* ── Form ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1.4rem;
+    }
+    @media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .field input {
+      width: 100%;
+      border: 1.5px solid var(--mid);
+      border-radius: 8px;
+      padding: 0.72rem 1rem;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--light);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,168,150,0.12);
+      background: var(--white);
+    }
+    .field input::placeholder { color: var(--muted); }
+
+    /* ZIP multi-input */
+    .zip-row { display: flex; gap: 0.7rem; align-items: flex-end; flex-wrap: wrap; }
+    .zip-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0,168,150,0.1);
+      border: 1px solid var(--teal);
+      border-radius: 100px;
+      padding: 4px 12px 4px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--teal);
+      cursor: default;
+    }
+    .zip-tag button {
+      background: none; border: none; cursor: pointer;
+      color: var(--teal); font-size: 1rem; line-height: 1;
+      padding: 0; opacity: 0.7;
+    }
+    .zip-tag button:hover { opacity: 1; }
+    .zip-input-wrap { display: flex; gap: 0.5rem; flex: 1; min-width: 180px; }
+    .zip-input-wrap input { flex: 1; }
+    .btn-add-zip {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 0 1rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      height: 42px;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-add-zip:hover { background: #008c7a; }
+
+    /* ── Generate button ── */
+    .btn-generate {
+      width: 100%;
+      background: linear-gradient(135deg, var(--teal) 0%, #009988 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+      box-shadow: 0 4px 18px rgba(0,168,150,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-generate:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(0,168,150,0.4);
+    }
+    .btn-generate:active:not(:disabled) { transform: translateY(0); }
+    .btn-generate:disabled { opacity: 0.65; cursor: not-allowed; }
+    .btn-generate .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error / success alerts ── */
+    .alert {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+    .alert-success { background: #f0fdf9; border: 1px solid #6ee7d4; color: #065f46; }
+
+    /* ── Preview card ── */
+    .preview-card {
+      border: 1.5px dashed var(--mid);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+      background: var(--light);
+    }
+    .preview-icon { font-size: 3rem; }
+    .preview-title { font-family: var(--serif); font-size: 1.2rem; color: var(--navy); }
+    .preview-sub { font-size: 0.85rem; color: var(--muted); max-width: 320px; line-height: 1.5; }
+
+    /* ── Recent reports list ── */
+    .reports-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .report-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .report-item:hover { background: var(--mid); }
+    .report-zip {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 100px;
+      flex-shrink: 0;
+    }
+    .report-info { flex: 1; }
+    .report-info strong { font-size: 0.88rem; display: block; }
+    .report-info span { font-size: 0.75rem; color: var(--muted); }
+    .report-dl {
+      color: var(--teal);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 5px 12px;
+      border: 1.5px solid var(--teal);
+      border-radius: 100px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .report-dl:hover { background: var(--teal); color: white; }
+
+    /* ── Features strip ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+    .feature {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.4rem;
+      box-shadow: 0 1px 8px rgba(11,31,58,0.05);
+      border-top: 3px solid var(--teal);
+    }
+    .feature-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+    .feature h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .feature p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Download bar */
+    .download-bar {
+      background: linear-gradient(135deg, #f0fdf9, #e0f7f4);
+      border: 1.5px solid var(--teal);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .download-icon { font-size: 2rem; }
+    .download-info { flex: 1; }
+    .download-info strong { display: block; font-size: 0.95rem; color: var(--navy); margin-bottom: 2px; }
+    .download-info span { font-size: 0.8rem; color: var(--muted); }
+    .btn-download {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.12s;
+      white-space: nowrap;
+    }
+    .btn-download:hover { background: #122640; }
+
+    /* Snaphomz CTA */
+    .snaphomz-cta {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--white);
+      margin-top: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .snaphomz-cta::before {
+      content: '';
+      position: absolute;
+      bottom: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(0,168,150,0.15) 0%, transparent 70%);
+    }
+    .snaphomz-cta h3 { font-family: var(--serif); font-size: 1.6rem; margin-bottom: 0.6rem; }
+    .snaphomz-cta h3 em { color: var(--gold); font-style: normal; }
+    .snaphomz-cta p { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 1.4rem; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .cta-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+    .btn-cta-primary {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.6rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-cta-primary:hover { background: #008c7a; }
+    .btn-cta-secondary {
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 0.7rem 1.6rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-cta-secondary:hover { border-color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Snap<span>Report</span></div>
+  <div class="nav-pill">Beta</div>
+  <div class="nav-right">Powered by Snaphomz</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Market Intelligence Platform</div>
+  <h1>Your market report.<br/><em>Done in 90 seconds.</em></h1>
+  <p>Branded monthly PDF reports for agents — packed with live market data, neighbourhood scores, and trend charts. Zero manual work.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-n">90s</div><div class="hero-stat-l">To generate</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">12mo</div><div class="hero-stat-l">Price history</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">100%</div><div class="hero-stat-l">Co-branded</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">∞</div><div class="hero-stat-l">ZIP codes</div></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- GENERATE FORM -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-dot"></div>
+      <h2>Generate Market Report</h2>
+    </div>
+    <div class="card-body">
+
+      <div id="error-msg" class="alert alert-error" style="display:none"></div>
+      <div id="success-msg" class="alert alert-success" style="display:none"></div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Agent Name</label>
+          <input id="agent-name" type="text" placeholder="e.g. Sarah Chen" value="" />
+        </div>
+        <div class="field">
+          <label>Report Month</label>
+          <input id="report-month" type="text" placeholder="e.g. June 2026" value="" />
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:1.4rem">
+        <label>ZIP Codes (add up to 5)</label>
+        <div class="zip-row" id="zip-row">
+          <!-- tags inserted here -->
+          <div class="zip-input-wrap">
+            <input id="zip-input" type="text" placeholder="Enter ZIP code" maxlength="5"
+                   inputmode="numeric" pattern="[0-9]*" />
+            <button class="btn-add-zip" id="add-zip-btn" title="Add ZIP">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-generate" id="gen-btn">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <path d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Generate PDF Report
+      </button>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD SECTION (hidden until generated) -->
+  <div id="download-section" style="display:none">
+    <div id="download-items"></div>
+  </div>
+
+  <!-- FEATURES -->
+  <p class="section-label">What's inside every report</p>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">📈</div>
+      <h3>12-Month Price Trend</h3>
+      <p>Visual line chart of median sale prices with YoY change calculation.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏘️</div>
+      <h3>Neighbourhood Scorecard</h3>
+      <p>Walk Score, school rating, crime level, and new permit activity at a glance.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>Market Temperature</h3>
+      <p>Hot / Warm / Neutral signal with days-on-market and list-to-sale ratio.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">✍️</div>
+      <h3>Market Commentary</h3>
+      <p>Plain-English narrative that reads like a seasoned analyst wrote it.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏷️</div>
+      <h3>Agent Co-Branding</h3>
+      <p>Your name, photo placeholder, and Snaphomz co-brand on every page.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📬</div>
+      <h3>Auto-Schedule (Roadmap)</h3>
+      <p>Set it once; reports auto-send to your contact list every month.</p>
+    </div>
+  </div>
+
+  <!-- SNAPHOMZ CTA -->
+  <div class="snaphomz-cta">
+    <h3>Built for <em>Snaphomz</em> agents</h3>
+    <p>SnapReport turns your market expertise into a monthly touchpoint that keeps you top-of-mind — and sends every reader back to Snaphomz listings.</p>
+    <div class="cta-btns">
+      <button class="btn-cta-primary">List on Snaphomz →</button>
+      <button class="btn-cta-secondary">View Live Listings</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ── State ────────────────────────────────────────────────────────────────
+  const state = {
+    zips: [],
+    loading: false,
+    reports: [],
+  };
+
+  // ── DOM refs ─────────────────────────────────────────────────────────────
+  const zipInput   = document.getElementById('zip-input');
+  const addZipBtn  = document.getElementById('add-zip-btn');
+  const zipRow     = document.getElementById('zip-row');
+  const genBtn     = document.getElementById('gen-btn');
+  const errorMsg   = document.getElementById('error-msg');
+  const successMsg = document.getElementById('success-msg');
+  const dlSection  = document.getElementById('download-section');
+  const dlItems    = document.getElementById('download-items');
+  const agentInput = document.getElementById('agent-name');
+  const monthInput = document.getElementById('report-month');
+
+  // Pre-fill month
+  const now = new Date();
+  monthInput.value = now.toLocaleString('default', { month: 'long' }) + ' ' + now.getFullYear();
+
+  // ── ZIP tag management ────────────────────────────────────────────────────
+  function renderZipTags() {
+    // Remove old tags
+    document.querySelectorAll('.zip-tag').forEach(el => el.remove());
+    // Insert new tags before the input wrap
+    const inputWrap = zipRow.querySelector('.zip-input-wrap');
+    state.zips.forEach(zip => {
+      const tag = document.createElement('div');
+      tag.className = 'zip-tag';
+      tag.innerHTML = `<span>${zip}</span><button onclick="removeZip('${zip}')" title="Remove">×</button>`;
+      zipRow.insertBefore(tag, inputWrap);
+    });
+  }
+
+  function addZip() {
+    const zip = zipInput.value.trim();
+    if (!/^\d{5}$/.test(zip)) { showError('ZIP codes must be exactly 5 digits.'); return; }
+    if (state.zips.includes(zip)) { showError('That ZIP is already added.'); return; }
+    if (state.zips.length >= 5) { showError('You can add up to 5 ZIP codes.'); return; }
+    state.zips.push(zip);
+    zipInput.value = '';
+    clearMessages();
+    renderZipTags();
+  }
+
+  function removeZip(zip) {
+    state.zips = state.zips.filter(z => z !== zip);
+    renderZipTags();
+  }
+  window.removeZip = removeZip;
+
+  addZipBtn.addEventListener('click', addZip);
+  zipInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addZip(); }
+  });
+
+  // ── Messages ─────────────────────────────────────────────────────────────
+  function showError(msg) {
+    errorMsg.textContent = '⚠ ' + msg;
+    errorMsg.style.display = 'flex';
+    successMsg.style.display = 'none';
+  }
+  function showSuccess(msg) {
+    successMsg.textContent = '✓ ' + msg;
+    successMsg.style.display = 'flex';
+    errorMsg.style.display = 'none';
+  }
+  function clearMessages() {
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+  }
+
+  // ── Generate ──────────────────────────────────────────────────────────────
+  genBtn.addEventListener('click', async () => {
+    clearMessages();
+    if (state.zips.length === 0) { showError('Add at least one ZIP code to generate a report.'); return; }
+    if (state.loading) return;
+
+    state.loading = true;
+    genBtn.disabled = true;
+    genBtn.innerHTML = '<div class="spinner"></div> Generating…';
+
+    const agentName = agentInput.value.trim() || 'Your Agent';
+    const month     = monthInput.value.trim() || '';
+    const generated = [];
+
+    for (const zip of state.zips) {
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ zip_code: zip, agent_name: agentName, month }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+          showError(`ZIP ${zip}: ${err.error}`);
+          continue;
+        }
+
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        generated.push({ zip, agent: agentName, month, url });
+      } catch (e) {
+        showError(`ZIP ${zip}: ${e.message}`);
+      }
+    }
+
+    state.loading = false;
+    genBtn.disabled = false;
+    genBtn.innerHTML = `
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+        <path d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Generate PDF Report`;
+
+    if (generated.length > 0) {
+      showSuccess(`${generated.length} report${generated.length > 1 ? 's' : ''} ready for download!`);
+      renderDownloads(generated);
+    }
+  });
+
+  function renderDownloads(reports) {
+    dlSection.style.display = 'block';
+    dlItems.innerHTML = '';
+    reports.forEach(({ zip, agent, month, url }) => {
+      const div = document.createElement('div');
+      div.className = 'download-bar';
+      div.innerHTML = `
+        <div class="download-icon">📄</div>
+        <div class="download-info">
+          <strong>SnapReport — ZIP ${zip}</strong>
+          <span>${agent} · ${month}</span>
+        </div>
+        <a class="btn-download" href="${url}" download="SnapReport_${zip}.pdf">
+          ↓ Download PDF
+        </a>
+      `;
+      dlItems.appendChild(div);
+    });
+    dlSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+</body>
+</html>
